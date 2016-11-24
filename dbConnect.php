@@ -1,7 +1,7 @@
 <?php
 /**
-* Coding Pirates Team-inator
-* Used to generate teams at Coding Pirates Game Jam 2015
+* Coding Pirates Teaminator
+* Used to generate teams at Coding Pirates Game Jam 2015-2016
 */
 
 class DB{
@@ -35,9 +35,16 @@ class DB{
 
   // Connect to db
   private function connect() {
-    $dsn = "mysql:dbname=teaminator;host=127.0.0.1";
-    $user = "teaminator";
-    $password = "password";
+    // first, get config file
+    if(file_exists("config.php")) {
+      include_once("config.php");
+    } else {
+      die("No config file");
+    }
+    $config = new config;
+    $dsn = "mysql:dbname=" . $config->get_db() . ";host=" . $config->get_host() . ";charset=utf8mb4";
+    $user = $config->get_user();
+    $password = $config->get_pass();
 
     try {
       $db = new PDO($dsn,$user,$password);

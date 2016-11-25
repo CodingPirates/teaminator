@@ -6,6 +6,7 @@
 
 include("header.php");
 ?>
+<div class="col-md-4">
 <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 Antal: <input type="number" name="teamsize" /><br />
 Mindst alder: <input type="number" name="minage" /><br />
@@ -28,5 +29,30 @@ if(isset($_REQUEST['submit'])) {
   </pre>
   <?php
 }
+?>
+</div>
+<div class="col-md-4"></div>
+<div class="col-md-4">
+  <h2>Aldersoversigt</h2>
+  <?php
+  $sql_gen = "SELECT * FROM participants WHERE teaminated=0 AND updated_since_csv=1 AND age=:age";
+  $sql_vis = "SELECT * FROM participants WHERE teaminated=0 AND updated_since_csv=1 AND age=:age AND visualprog=1";
+  $sql_tex = "SELECT * FROM participants WHERE teaminated=0 AND updated_since_csv=1 AND age=:age AND textprog=1";
+  $sql_des = "SELECT * FROM participants WHERE teaminated=0 AND updated_since_csv=1 AND age=:age AND graphic=1";
+  $sql_ultra = "SELECT * FROM participants WHERE teaminated=0 AND updated_since_csv=1 AND age=:age AND ultra=1";
+  for($i=7;$i<=17;$i++) {
+    $sql_val = [[":age",$i]];
+    if($db->count($sql_gen,$sql_val) > 0) {
+      echo "<b>" . $i . " år</b><br />";
+      echo $db->count($sql_gen,$sql_val) . " i alt<br />";
+      echo $db->count($sql_vis,$sql_val) . " visuelle<br />";
+      echo $db->count($sql_tex,$sql_val) . " tekst<br />";
+      echo $db->count($sql_des,$sql_val) . " designere<br />";
+      echo $db->count($sql_ultra,$sql_val) . " ultra<br />";
+    }
+  }
+  ?>
+</div>
+<?php
 include("footer.php");
 ?>

@@ -5,7 +5,9 @@
 */
 
 include("header.php");
-
+?>
+<a href="<?php echo $teaminator_url . 'download_csv.php'; ?>" title="Download CSV">Download CSV</a>
+<?php
 // Get teams and show them
 $number_teams = "SELECT COUNT(DISTINCT team_ID) FROM team";
 $number_teams_result = $db->query($number_teams);
@@ -22,12 +24,12 @@ for($i=1;$i<=$number_teams_result[0][0];$i++) {
   foreach ($find_team_members_result as $member) {
     # find name, display
     $member_id = $member["participants_ID"];
-    $name_sql = "SELECT name FROM participants WHERE ID=:id";
+    $name_sql = "SELECT name, age FROM participants WHERE ID=:id";
     $values = [
       [":id",$member_id]
     ];
     $name = $db->query($name_sql,$values);
-    echo $name['0']["name"] . "<br />";
+    echo $name['0']["name"] . " - " . $name['0']['age'] . " år" . "<br />";
   }
   echo "<br /><br />";
 }

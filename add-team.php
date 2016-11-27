@@ -22,6 +22,8 @@ if(!isset($_REQUEST['submit'])) {
       ?>
     </select>
     <br />
+    DR Ultra må gerne følge holdet: <input type="checkbox" name="ultra" value="ultra" />
+    <br />
     <button name="submit" type="submit" class="btn btn-default btn-block">Tilføj hold</button>
   </form>
   <script>var names = $('.names').bootstrapDualListbox({moveOnSelect:false});</script>
@@ -34,18 +36,28 @@ if(!isset($_REQUEST['submit'])) {
     if(!isset($names)) {
       die("Du har ikke valgt nogen holddeltagere.");
     } else {
-      $sql = "INSERT INTO team (team_ID, participants_ID) VALUES (:team_ID, :participants_ID)";
+      $sql = "INSERT INTO team (team_ID, participants_ID, created) VALUES (:team_ID, :participants_ID, :created)";
       $nNames = count($names);
       $next_ID_sql = "SELECT team_ID FROM team ORDER BY team_ID DESC LIMIT 1";
       $nextid = $db->query($next_ID_sql);
       $next_team_ID = $nextid['0']["team_ID"] + 1;
-      $update_sql = "UPDATE participants SET teaminated=1 WHERE ID=:ID";
+      $update_sql = "UPDATE participants SET teaminated=1, ultra=:ultra WHERE ID=:ID";
+
+      if(isset($_REQUEST['ultra'])) {
+        $ultra = true;
+      } else {
+        $ultra = false;
+      }
 
       for($i=0;$i < $nNames;$i++) {
-        $update_value = [[":ID",$names[$i]]];
+        $update_value = [
+          [":ID",$names[$i]],
+          [":ultra",$ultra]
+        ];
         $values = [
           [":team_ID",$next_team_ID],
-          [":participants_ID",$names[$i]]
+          [":participants_ID",$names[$i]],
+          [":created",1]
         ];
         $db->query($sql,$values);
         $db->query($update_sql,$update_value);
